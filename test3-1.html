@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>To-do List</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    
+    <!-- Don't use this in production: -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+      // JavaScript
+
+      function LineBreak(props) {
+        return React.createElement(
+          "div", null,
+          React.createElement("br", null)
+        );
+      }
+
+      function ToDoInput(props) {
+        return React.createElement(
+          "form", { onSubmit: props.onSubmit },
+          React.createElement( "label", { htmlFor: "new-todo" }, "What needs to be done?", React.createElement(LineBreak, null)),
+          React.createElement("input", { id: "new-todo", onChange: props.onChange, value: props.value }),
+          React.createElement("button", null, "Add #", props.nextNumber)
+        );
+      }
+
+      function ToDoList(props) {
+        return React.createElement(
+          "div", null,
+          React.createElement("h3", null, "To-do List"),
+          React.createElement(
+            "ol", null,
+            props.items.map(item => React.createElement("li", {key: item.id}, item.text))
+          )
+        );
+      }
+
+      class ToDoList extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = { items: [], text: "" };
+
+          this.handleChange = this.handleChange.bind(this);
+          this.handleSubmit = this.handleSubmit.bind(this);
+        }
+
+        handleChange(e) {
+          this.setState({ text: e.target.value });
+        }
+
+        handleSubmit(e) {
+          e.preventDefault();
+          if (!this.state.text.length) return;
+          const newItem = { id: Date.now(), text: this.state.text };
+          this.setState(state => ({ items: state.items.concat(newItem), text: "" }));
+        }
+
+        render() {
+          return React.createElement(
+            "div", null,
+            React.createElement(ToDoList, { items: this.state.items }),
+            React.createElement(ToDoInput, {
+              value: this.state.text,
+              nextNumber: this.state.items.length + 1,
+              onChange: this.handleChange,
+              onSubmit: this.handleSubmit
+              //onChange: (e) => this.handleChange(e),              //onSubmit: (e) => this.handleSubmit(e)
+            })
+          );
+        }
+      }
+
+      ReactDOM.render(
+        React.createElement(ToDoList, null),
+        document.getElementById('root')
+      );
+
+    </script>
+    <!--
+      Note: this page is a great way to try React but it's not suitable for production.
+      It slowly compiles JSX with Babel in the browser and uses a large development build of React.
+
+      Read this section for a production-ready setup with JSX:
+      https://reactjs.org/docs/add-react-to-a-website.html#add-jsx-to-a-project
+
+      In a larger project, you can use an integrated toolchain that includes JSX instead:
+      https://reactjs.org/docs/create-a-new-react-app.html
+
+      You can also use React without JSX, in which case you can remove Babel:
+      https://reactjs.org/docs/react-without-jsx.html
+    -->
+  </body>
+</html>

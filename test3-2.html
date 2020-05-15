@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>To-do List</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    
+    <!-- Don't use this in production: -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+      // JSX
+
+      function LineBreak(props) {
+        return <div><br></br></div>;
+      }
+
+      function ToDoInput(props) {
+        return (
+          <form onSubmit={props.onSubmit}>
+            <label htmlFor="new-todo">What needs to be done?<LineBreak /></label>
+            <input
+              id="new-todo"
+              onChange={props.onChange}
+              value={props.value}
+            />
+            <button>Add #{props.nextNumber}</button>
+          </form>
+        );
+      }
+
+      function ToDoList(props) {
+        return (
+          <div>
+            <h3>To-do List</h3>
+            <ol>{props.items.map(item => <li key={item.id}>{item.text}</li>)}</ol>
+          </div>
+        );
+      }
+
+      class ToDoList extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = { items: [], text: "" };
+        }
+
+        handleChange(e) {
+          this.setState({ text: e.target.value });
+        }
+
+        handleSubmit(e) {
+          e.preventDefault();
+          if (!this.state.text.length) return;
+          const newItem = { id: Date.now(), text: this.state.text };
+          this.setState(state => ({ items: state.items.concat(newItem), text: "" }));
+        }
+
+        render() {
+          return (
+            <div>
+              <ToDoList items={this.state.items} />
+              <ToDoInput
+                value={this.state.text}
+                nextNumber={this.state.items.length + 1}
+                onChange={(e) => this.handleChange(e)}
+                onSubmit={(e) => this.handleSubmit(e)}
+              />
+            </div>
+          );
+        }
+      }
+
+      ReactDOM.render(<ToDoList />, document.getElementById('root'));
+
+    </script>
+    <!--
+      Note: this page is a great way to try React but it's not suitable for production.
+      It slowly compiles JSX with Babel in the browser and uses a large development build of React.
+
+      Read this section for a production-ready setup with JSX:
+      https://reactjs.org/docs/add-react-to-a-website.html#add-jsx-to-a-project
+
+      In a larger project, you can use an integrated toolchain that includes JSX instead:
+      https://reactjs.org/docs/create-a-new-react-app.html
+
+      You can also use React without JSX, in which case you can remove Babel:
+      https://reactjs.org/docs/react-without-jsx.html
+    -->
+  </body>
+</html>
